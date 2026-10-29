@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SMARTPAW - Rastreo & Salud Animal</title>
+
+  <!-- Google Fonts & Leaflet CSS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <!-- Chart.js para Signos Vitales -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --primary: #0052CC;
+      --primary-light: #1765E3;
+      --secondary: #00B4D8;
+      --accent: #FF6B35;
+      --dark: #0A192F;
+      --light-bg: #F4F7FC;
+      --card-bg: #FFFFFF;
+      --text-main: #1E293B;
+      --text-muted: #64748B;
+      --border-color: #E2E8F0;
+      --success: #10B981;
+      --shadow-sm: 0 2px 8px rgba(0, 82, 204, 0.08);
+      --shadow-lg: 0 12px 32px rgba(0, 82, 204, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #0d1B2A;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: var(--text-main);
+    }
+
+    /* Marco Contenedor Móvil */
+    .app-viewport {
+      width: 100%;
+      max-width: 430px;
+      height: 100vh;
+      max-height: 932px;
+      background-color: var(--light-bg);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    }
+
+    @media (min-width: 450px) {
+      .app-viewport {
+        height: 884px;
+        border-radius: 44px;
+        border: 12px solid #1E293B;
+      }
+    }
+
+    /* Header */
+    .app-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 16px 20px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+      z-index: 100;
+    }
+
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: white;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: var(--primary);
+      font-size: 18px;
+    }
+
+    .brand-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-title span {
+      color: var(--secondary);
+    }
+
+    .status-badge {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: blur(4px);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    .status-dot.active-pulse {
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    /* Area Principal de Contenido */
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .view-screen {
+      display: none;
+      height: 100%;
+      flex-direction: column;
+    }
+
+    .view-screen.active {
+      display: flex;
+    }
+
+    /* Pestaña: Mapa GPS */
+    #map-container {
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .map-controls-floating {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-float {
+      background: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 12px;
+      color: var(--primary);
+      box-shadow: var(--shadow-lg);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-float:active {
+      transform: scale(0.95);
+    }
+
+    .pet-card-overlay {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: var(--shadow-lg);
+      z-index: 500;
+      border: 1px solid white;
+    }
+
+    .pet-info-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .pet-avatar-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pet-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: white;
+    }
+
+    .pet-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .pet-breed {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .quick-vitals-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      background: var(--light-bg);
+      padding: 10px;
+      border-radius: 14px;
+    }
+
+    .quick-vital-item {
+      text-align: center;
+    }
+
+    .quick-vital-value {
+      font-weight: 800;
+      font-size: 14px;
+      color: var(--primary);
+    }
+
+    .quick-vital-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Pestaña: Signos Vitales */
+    .dashboard-container {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chart-box {
+      width: 100%;
+      height: 160px;
+    }
+
+    .vitals-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .vital-card {
+      background: var(--light-bg);
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid #E2E8F0;
+    }
+
+    .vital-icon {
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+
+    .vital-val {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .vital-unit {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* Pestaña: Estado de Animo */
+    .mood-hero {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .mood-emoji {
+      font-size: 64px;
+      margin-bottom: 8px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .mood-status-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .mood-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      padding: 0 20px;
+    }
+
+    /* Modo Collar (Emisor) */
+    .emitter-screen {
+      padding: 24px 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+
+    .radar-circle {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(0, 82, 204, 0.1), rgba(0, 180, 216, 0.2));
+      border: 2px solid var(--secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 16px;
+      font-weight: 700;
+      font-size: 15px;
+      width: 100%;
+      cursor: pointer;
+      box-shadow: var(--shadow-lg);
+      transition: all 0.2s;
+    }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
+
+    .coords-box {
+      background: white;
+      border: 1px solid var(--border-color);
+      padding: 12px;
+      border-radius: 12px;
+      margin-top: 16px;
+      font-size: 12px;
+      font-family: monospace;
+      color: var(--text-muted);
+      width: 100%;
+    }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      background: white;
+      border-top: 1px solid var(--border-color);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 8px 0 12px;
+      z-index: 100;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .nav-icon {
+      font-size: 20px;
+    }
+
+    .nav-item.active {
+      color: var(--primary);
+    }
+
+    .nav-item.active .nav-icon {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-viewport">
+    
+    <!-- Top Bar -->
+    <header class="app-header">
+      <div class="brand-container">
+        <div class="brand-icon">🐾</div>
+        <div class="brand-title">SMART<span>PAW</span></div>
+      </div>
+      <div class="status-badge">
+        <div class="status-dot active-pulse"></div>
+        <span id="header-status-text">GPS CONECTADO</span>
+      </div>
+    </header>
+
+    <!-- Main Screens Viewport -->
+    <main class="main-content">
+
+      <!-- PANTALLA 1: MAPA GPS -->
+      <section id="view-map" class="view-screen active">
+        <div class="map-controls-floating">
+          <button class="btn-float" onclick="toggleSimulation()">
+            <span>⚡</span> <span id="sim-btn-text">Simular Ruta</span>
+          </button>
+          <button class="btn-float" onclick="recenterMap()">
+            <span>🎯</span> Centrar
+          </button>
+        </div>
+
+        <div id="map-container"></div>
+
+        <div class="pet-card-overlay">
+          <div class="pet-info-header">
+            <div class="pet-avatar-wrapper">
+              <div class="pet-avatar">🐶</div>
+              <div>
+                <div class="pet-name">Max (Collar SMARTPAW)</div>
+                <div class="pet-breed">Golden Retriever • En movimiento</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="quick-vitals-row">
+            <div class="quick-vital-item">
+              <div class="quick-vital-value" id="quick-bpm">84 BPM</div>
+              <div class="quick-vital-label">Ritmo C.</div>
+            </div>
+            <div class="quick-vital-item">
+              <div class="quick-vital-value" id="quick-temp">38.4°C</div>
+              <div class="quick-vital-label">Temp.</div>
+            </div>
+            <div class="quick-vital-item">
+              <div class="quick-vital-value" id="quick-mood">Feliz 😃</div>
+              <div class="quick-vital-label">Ánimo</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANTALLA 2: SIGNOS VITALES -->
+      <section id="view-vitals" class="view-screen">
+        <div class="dashboard-container">
+          
+          <div class="card">
+            <div class="card-title">
+              <span>Frecuencia Cardíaca (Tiempo Real)</span>
+              <span style="color: var(--accent); font-weight: 800;" id="live-bpm-display">84 BPM</span>
+            </div>
+            <div class="chart-box">
+              <canvas id="ecgChart"></canvas>
+            </div>
+          </div>
+
+          <div class="vitals-grid">
+            <div class="vital-card">
+              <div class="vital-icon">🌡️</div>
+              <div class="vital-val" id="val-temp">38.4 <span class="vital-unit">°C</span></div>
+              <div class="quick-vital-label" style="margin-top: 4px;">Temperatura Normal</div>
+            </div>
+
+            <div class="vital-card">
+              <div class="vital-icon">🫁</div>
+              <div class="vital-val" id="val-spo2">98 <span class="vital-unit">%</span></div>
+              <div class="quick-vital-label" style="margin-top: 4px;">Oxigenación SpO2</div>
+            </div>
+
+            <div class="vital-card">
+              <div class="vital-icon">🐾</div>
+              <div class="vital-val" id="val-steps">3,420</div>
+              <div class="quick-vital-label" style="margin-top: 4px;">Pasos Hoy</div>
+            </div>
+
+            <div class="vital-card">
+              <div class="vital-icon">🔥</div>
+              <div class="vital-val" id="val-cal">245 <span class="vital-unit">kcal</span></div>
+              <div class="quick-vital-label" style="margin-top: 4px;">Calorías Quim.</div>
+            </div>
+          </div>
+
+          <div class="card" style="background: linear-gradient(135deg, rgba(0, 180, 216, 0.1), rgba(0, 82, 204, 0.05)); border-color: var(--secondary);">
+            <div style="font-weight: 700; font-size: 13px; color: var(--primary);">Análisis Biométrico SMARTPAW</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+              Los signos vitales se mantienen estables dentro del rango saludable para su edad y raza.
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- PANTALLA 3: ESTADO DE ÁNIMO -->
+      <section id="view-mood" class="view-screen">
+        <div class="dashboard-container">
+          
+          <div class="card mood-hero">
+            <div class="mood-emoji" id="mood-emoji">🐶</div>
+            <div class="mood-status-title" id="mood-title">Activo y Contento</div>
+            <div class="mood-desc" id="mood-desc">Max está explorando su entorno. Su actividad física indica un estado de ánimo positivo y alerta.</div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Indicadores de Comportamiento</div>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; margin-bottom: 4px;">
+                  <span>Nivel de Energía</span>
+                  <span id="energy-pct">85%</span>
+                </div>
+                <div style="height: 8px; background: #E2E8F0; border-radius: 4px; overflow: hidden;">
+                  <div id="energy-bar" style="width: 85%; height: 100%; background: var(--secondary); transition: all 0.5s;"></div>
+                </div>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; margin-bottom: 4px;">
+                  <span>Nivel de Estrés</span>
+                  <span id="stress-pct">12% (Bajo)</span>
+                </div>
+                <div style="height: 8px; background: #E2E8F0; border-radius: 4px; overflow: hidden;">
+                  <div id="stress-bar" style="width: 12%; height: 100%; background: var(--success); transition: all 0.5s;"></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="card">
+            <div class="card-title">Resumen de Actividad Reciente</div>
+            <ul style="list-style: none; font-size: 12px; color: var(--text-muted); display: flex; flex-direction: column; gap: 8px;">
+              <li>🟢 <strong>10:15 AM:</strong> Caminata activa detectada (Patrón constante).</li>
+              <li>🔵 <strong>09:30 AM:</strong> Periodo de descanso ligero.</li>
+              <li>🟠 <strong>08:00 AM:</strong> Alimentación y consumo de agua.</li>
+            </ul>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- PANTALLA 4: MODO EMISOR (COLLAR) -->
+      <section id="view-emitter" class="view-screen">
+        <div class="emitter-screen">
+          <div class="radar-circle">
+            📡
+          </div>
+
+          <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">Modo Collar / Emisor GPS</h3>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">
+            Utiliza este teléfono como si fuera el collar físico. Transmitirá las coordenadas GPS reales en tiempo real hacia el otro teléfono.
+          </p>
+
+          <button id="btn-toggle-emitter" class="btn-primary" onclick="toggleGPSEmitter()">
+            Iniciar Transmisión GPS
+          </button>
+
+          <div id="emitter-coords" class="coords-box">
+            Estado: En espera de activación
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Navigation Bar -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" onclick="switchTab('map')">
+        <span class="nav-icon">🗺️</span>
+        <span>Mapa</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('vitals')">
+        <span class="nav-icon">❤️</span>
+        <span>Vitales</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('mood')">
+        <span class="nav-icon">😊</span>
+        <span>Ánimo</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('emitter')">
+        <span class="nav-icon">📡</span>
+        <span>Emisor</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    // Variables Globales
+    let map, petMarker;
+    let isSimulating = false;
+    let simInterval = null;
+    let isEmitting = false;
+    let watchId = null;
+    let ecgChart = null;
+
+    // Coordenadas por defecto (Centro de Campus Universitario / Tampico)
+    let currentLat = 22.2530;
+    let currentLng = -97.8610;
+
+    // Canal de sincronización en vivo entre dos pestañas/celulares
+    const syncChannel = new BroadcastChannel('smartpaw_gps_channel');
+
+    // Inicialización al cargar la página
+    window.addEventListener('DOMContentLoaded', () => {
+      initMap();
+      initECGChart();
+      startVitalsAutoLoop();
+      
+      // Escuchar datos transmitidos por el Celular A (Modo Collar)
+      syncChannel.onmessage = (event) => {
+        if (event.data && event.data.lat && event.data.lng) {
+          updatePetPosition(event.data.lat, event.data.lng);
+          document.getElementById('header-status-text').innerText = "GPS EN VIVO (EMISOR)";
+        }
+      };
+
+      // También escuchar cambios vía LocalStorage para compatibilidad
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'smartpaw_coords') {
+          const data = JSON.parse(e.newValue);
+          if (data) updatePetPosition(data.lat, data.lng);
+        }
+      });
+    });
+
+    // Cambiar Pestañas de la App
+    function switchTab(tabName) {
+      document.querySelectorAll('.view-screen').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+      document.getElementById(`view-${tabName}`).classList.add('active');
+      
+      const tabMap = { 'map': 0, 'vitals': 1, 'mood': 2, 'emitter': 3 };
+      document.querySelectorAll('.nav-item')[tabMap[tabName]].classList.add('active');
+
+      if (tabName === 'map' && map) {
+        setTimeout(() => map.invalidateSize(), 200);
+      }
+    }
+
+    // Inicializar Mapa Leaflet
+    function initMap() {
+      map = L.map('map-container', { zoomControl: false }).setView([currentLat, currentLng], 17);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: 'SMARTPAW GPS'
+      }).addTo(map);
+
+      // Icono personalizado para la mascota
+      const petIcon = L.divIcon({
+        className: 'custom-pet-marker',
+        html: `<div style="
+          background: #0052CC; 
+          color: white; 
+          width: 40px; 
+          height: 40px; 
+          border-radius: 50%; 
+          display: flex; 
+          align-items: center; 
+          justify-content: center; 
+          font-size: 20px; 
+          border: 3px solid white; 
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        ">🐶</div>`,
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
+      });
+
+      petMarker = L.marker([currentLat, currentLng], { icon: petIcon }).addTo(map);
+    }
+
+    // Actualizar Ubicación de la Mascota
+    function updatePetPosition(lat, lng) {
+      currentLat = lat;
+      currentLng = lng;
+      if (petMarker && map) {
+        petMarker.setLatLng([lat, lng]);
+        map.panTo([lat, lng]);
+      }
+    }
+
+    function recenterMap() {
+      if (map) map.setView([currentLat, currentLng], 17);
+    }
+
+    // SIMULADOR DE RUTA AUTOMÁTICO (Para demo con 1 solo teléfono)
+    function toggleSimulation() {
+      isSimulating = !isSimulating;
+      const btnText = document.getElementById('sim-btn-text');
+
+      if (isSimulating) {
+        btnText.innerText = "Detener Demo";
+        document.getElementById('header-status-text').innerText = "SIMULANDO RUTA";
+        
+        let step = 0;
+        simInterval = setInterval(() => {
+          step += 0.00015;
+          const simLat = 22.2530 + Math.sin(step) * 0.001;
+          const simLng = -97.8610 + Math.cos(step) * 0.001;
+          
+          updatePetPosition(simLat, simLng);
+          randomizeVitals();
+        }, 1500);
+
+      } else {
+        btnText.innerText = "Simular Ruta";
+        document.getElementById('header-status-text').innerText = "GPS CONECTADO";
+        clearInterval(simInterval);
+      }
+    }
+
+    // MODO EMISOR GPS (Celular A - Collar)
+    function toggleGPSEmitter() {
+      const btn = document.getElementById('btn-toggle-emitter');
+      const coordsBox = document.getElementById('emitter-coords');
+
+      if (!isEmitting) {
+        if ("geolocation" in navigator) {
+          isEmitting = true;
+          btn.innerText = "Detener Transmisión";
+          btn.style.background = "#EF4444";
+
+          watchId = navigator.geolocation.watchPosition((pos) => {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+
+            coordsBox.innerHTML = `Transmitiendo GPS Real:<br>Lat: ${lat.toFixed(5)} | Lng: ${lng.toFixed(5)}`;
+
+            // Enviar datos en tiempo real al Celular B (Dueño)
+            const gpsData = { lat, lng, timestamp: Date.now() };
+            syncChannel.postMessage(gpsData);
+            localStorage.setItem('smartpaw_coords', JSON.stringify(gpsData));
+
+          }, (err) => {
+            coordsBox.innerText = "Error leyendo GPS: " + err.message;
+          }, { enableHighAccuracy: true });
+
+        } else {
+          alert("Tu dispositivo no soporta geolocalización.");
+        }
+      } else {
+        isEmitting = false;
+        navigator.geolocation.clearWatch(watchId);
+        btn.innerText = "Iniciar Transmisión GPS";
+        btn.style.background = "linear-gradient(135deg, var(--primary), var(--primary-light))";
+        coordsBox.innerText = "Estado: Transmisión Detenida";
+      }
+    }
+
+    // Gráfica ECG de Ritmo Cardíaco
+    function initECGChart() {
+      const ctx = document.getElementById('ecgChart').getContext('2d');
+      ecgChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: Array(15).fill(''),
+          datasets: [{
+            data: [80, 82, 81, 85, 110, 65, 84, 82, 83, 80, 85, 82, 81, 83, 84],
+            borderColor: '#FF6B35',
+            borderWidth: 3,
+            tension: 0.4,
+            pointRadius: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { display: false },
+            y: { display: false, min: 50, max: 120 }
+          }
+        }
+      });
+    }
+
+    // Bucle para actualizar Signos Vitales y Estado de Ánimo dinámicamente
+    function startVitalsAutoLoop() {
+      setInterval(() => {
+        if (!isSimulating) randomizeVitals();
+      }, 3000);
+    }
+
+    function randomizeVitals() {
+      const bpm = Math.floor(78 + Math.random() * 12);
+      const temp = (38.2 + Math.random() * 0.4).toFixed(1);
+
+      // Actualizar valores en UI
+      document.getElementById('quick-bpm').innerText = `${bpm} BPM`;
+      document.getElementById('quick-temp').innerText = `${temp}°C`;
+      document.getElementById('live-bpm-display').innerText = `${bpm} BPM`;
+      document.getElementById('val-temp').innerHTML = `${temp} <span class="vital-unit">°C</span>`;
+
+      // Actualizar gráfica de ECG
+      if (ecgChart) {
+        ecgChart.data.datasets[0].data.shift();
+        ecgChart.data.datasets[0].data.push(bpm);
+        ecgChart.update();
+      }
+
+      // Dinámica de Estado de Ánimo
+      const moods = [
+        { emoji: '🐶', title: 'Activo y Contento', desc: 'Max está caminando a ritmo saludable y muestra curisoidad.', moodText: 'Feliz 😃', energy: 85, stress: '10% (Bajo)' },
+        { emoji: '🐕', title: 'En Exploración', desc: 'Ritmo cardíaco ligeramente elevado, disfrutando del paseo.', moodText: 'Alerta 🧐', energy: 92, stress: '15% (Bajo)' },
+        { emoji: '🐾', title: 'Relajado', desc: 'Disfrutando de un descanso con signos vitales óptimos.', moodText: 'Tranquilo 😌', energy: 60, stress: '5% (Mínimo)' }
+      ];
+
+      const selected = moods[Math.floor(Math.random() * moods.length)];
+      document.getElementById('quick-mood').innerText = selected.moodText;
+      document.getElementById('mood-emoji').innerText = selected.emoji;
+      document.getElementById('mood-title').innerText = selected.title;
+      document.getElementById('mood-desc').innerText = selected.desc;
+      document.getElementById('energy-pct').innerText = `${selected.energy}%`;
+      document.getElementById('energy-bar').style.width = `${selected.energy}%`;
+      document.getElementById('stress-pct').innerText = selected.stress;
+    }
+  </script>
+</body>
+</html>

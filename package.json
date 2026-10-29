@@ -1,0 +1,11 @@
+{
+  "name": "smartpaw-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SmartPaw - Rastreo y Salud Animal (app Android con Capacitor)",
+  "dependencies": {
+    "@capacitor/android": "latest",
+    "@capacitor/cli": "latest",
+    "@capacitor/core": "latest"
+  }
+}
