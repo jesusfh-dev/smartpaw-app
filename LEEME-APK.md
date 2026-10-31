@@ -1,24 +1,32 @@
-# Cómo generar el APK de SmartPaw con GitHub
+# SmartPaw: cómo funcionan las actualizaciones
 
-## 1. Subir el proyecto a GitHub (desde VS Code)
-1. Abre la carpeta `smartpaw-app` en VS Code.
-2. Ve al panel **Control de código fuente** (icono de ramas, o `Ctrl+Shift+G`).
-3. Pulsa **"Publicar en GitHub"** (Publish to GitHub) e inicia sesión si te lo pide.
-4. Elige **repositorio privado** o público y confirma que se suban todos los archivos
-   (incluida la carpeta `.github`).
+La app del celular carga la página desde GitHub Pages:
+https://jesusfh-dev.github.io/smartpaw-app/
 
-## 2. Esperar la compilación (unos 5-8 minutos)
-1. En la página del repositorio en GitHub, abre la pestaña **Actions**.
-2. Verás "Compilar APK" en marcha. Cuando tenga la palomita verde, entra en ella.
-3. Abajo, en **Artifacts**, descarga **SmartPaw-APK** (es un .zip con `SmartPaw.apk` dentro).
+## Cambiar algo de la app (lo normal)
+1. Edita `index.html` en VS Code.
+2. Haz **Commit** y luego **Sync Changes**.
+3. En 1-2 minutos GitHub lo publica ("Publicar app web" en la pestaña Actions).
+4. Los celulares ven la versión nueva la próxima vez que abran la app.
+   No hay que reinstalar nada. (GitHub puede tardar hasta ~10 min en refrescar su caché.)
 
-## 3. Instalar en el celular
-1. Pasa `SmartPaw.apk` al celular (cable, Drive, WhatsApp, etc.).
-2. Ábrelo y permite "instalar apps de origen desconocido" cuando Android lo pida.
-3. Al usar el rastreo, la app pedirá permiso de ubicación: acéptalo.
+## Cuándo sí hace falta un APK nuevo
+Solo si cambias `capacitor.config.json`, `package.json`, `offline.html` o los workflows
+(por ejemplo: nombre de la app, icono, permisos). En ese caso "Compilar APK" se ejecuta solo
+y publica la versión en **Releases**.
 
-## Actualizar la app
-Cada vez que cambies `index.html` y hagas commit + sync en VS Code, GitHub genera un APK nuevo.
-También puedes lanzarlo a mano desde Actions → "Compilar APK" → "Run workflow".
+Enlace fijo para descargar siempre el APK más reciente desde el celular:
+https://github.com/jesusfh-dev/smartpaw-app/releases/latest/download/SmartPaw.apk
 
-Nota: la app necesita internet para cargar el mapa, las fuentes y las gráficas.
+Como el APK siempre se firma con `smartpaw-debug.keystore`, se instala encima del anterior
+sin desinstalar. No borres ese archivo: si se pierde, habría que desinstalar la app en todos
+los celulares una vez.
+
+## Sin internet
+Si el celular no tiene conexión, la app muestra la pantalla `offline.html` con un botón
+"Reintentar" y vuelve sola cuando regresa la conexión.
+
+## Instalar en un celular nuevo
+1. Abre el enlace de descarga de arriba en el celular.
+2. Abre `SmartPaw.apk` y permite "instalar apps de origen desconocido".
+3. Acepta el permiso de ubicación cuando la app lo pida.

@@ -1,5 +1,10 @@
 {
   "appId": "com.smartpaw.app",
   "appName": "SmartPaw",
-  "webDir": "www"
+  "webDir": "www",
+  "server": {
+    "url": "https://jesusfh-dev.github.io/smartpaw-app/",
+    "errorPath": "offline.html",
+    "androidScheme": "https"
+  }
 }

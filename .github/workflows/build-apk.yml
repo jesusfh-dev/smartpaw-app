@@ -1,9 +1,20 @@
 name: Compilar APK
 
+# El APK solo se recompila cuando cambia la parte nativa de la app.
+# Los cambios en index.html se publican con "Publicar app web" y no requieren APK nuevo.
 on:
   push:
-    branches: [main, master]
+    branches: [main]
+    paths:
+      - capacitor.config.json
+      - package.json
+      - offline.html
+      - smartpaw-debug.keystore
+      - .github/workflows/build-apk.yml
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -32,7 +43,7 @@ jobs:
       - name: Preparar la app web
         run: |
           mkdir -p www
-          cp index.html www/
+          cp index.html offline.html www/
 
       - name: Instalar Capacitor
         run: npm install
@@ -72,3 +83,14 @@ jobs:
         with:
           name: SmartPaw-APK
           path: SmartPaw.apk
+
+      - name: Publicar versión descargable (Releases)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.${{ github.run_number }}
+          name: SmartPaw 1.${{ github.run_number }}
+          make_latest: true
+          files: SmartPaw.apk
+          body: |
+            Descarga directa para el celular:
+            https://github.com/${{ github.repository }}/releases/latest/download/SmartPaw.apk

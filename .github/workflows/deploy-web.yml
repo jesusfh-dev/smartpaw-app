@@ -1,0 +1,48 @@
+name: Publicar app web
+
+# Cada cambio en index.html se publica en GitHub Pages
+# y llega a todos los celulares la próxima vez que abran la app.
+on:
+  push:
+    branches: [main]
+    paths:
+      - index.html
+      - .github/workflows/deploy-web.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v5
+
+      - name: Preparar solo los archivos de la web
+        run: |
+          mkdir -p sitio
+          cp index.html sitio/
+          touch sitio/.nojekyll
+
+      - name: Configurar Pages
+        uses: actions/configure-pages@v5
+
+      - name: Empaquetar la web
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: sitio
+
+      - name: Publicar en GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
