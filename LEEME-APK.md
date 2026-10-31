@@ -30,3 +30,34 @@ Si el celular no tiene conexión, la app muestra la pantalla `offline.html` con 
 1. Abre el enlace de descarga de arriba en el celular.
 2. Abre `SmartPaw.apk` y permite "instalar apps de origen desconocido".
 3. Acepta el permiso de ubicación cuando la app lo pida.
+
+## Rastreo en tiempo real (collar ↔ dueño)
+
+La app usa **MQTT sobre WebSockets seguros** (servidor público `broker.emqx.io`, con
+`broker.hivemq.com` de respaldo automático). No hace falta cuenta ni claves.
+
+**Cómo probarlo con dos celulares**
+1. Celular del collar: pestaña **Emisor** → elige *Simulado* o *GPS real* → **Iniciar transmisión**.
+   Ahí aparece el **código de 6 caracteres** (o usa *Compartir* para mandar un enlace).
+2. Celular del dueño: pestaña **Mapa** → **🔗 Vincular** → escribe el código.
+3. El dueño ve en vivo: ubicación animada, ruta, velocidad, distancia, batería y latencia.
+   Puede **🔔 Sonar collar** y activar **⚡ Modo intensivo** (ubicación cada 1 s en vez de 5 s).
+
+**Estados que ve el dueño**
+- *En línea*: llegan datos.
+- *Sin señal*: el collar sigue conectado pero no manda datos desde hace 15 s
+  (puedes probarlo con el interruptor "Simular pérdida de señal").
+- *Fuera de línea*: el collar se apagó, se quedó sin batería o perdió internet de golpe
+  (el servidor lo avisa automáticamente con su "Last Will"). Muestra la última conexión.
+
+**Importante**
+- El celular del collar debe tener la app **abierta y con la pantalla encendida**: Android pausa
+  las apps en segundo plano. La app intenta mantener la pantalla encendida mientras transmite.
+- El servidor es público: cualquiera que conozca el código podría ver la ubicación.
+  Para un producto real conviene un servidor propio con usuario/contraseña.
+
+**Versión de prueba (staging)**
+`staging.html` se publica en https://jesusfh-dev.github.io/smartpaw-app/staging.html y **no** afecta a los
+celulares. Prueba ahí los cambios grandes y, cuando funcionen, copia su contenido a `index.html`.
+
+**Pruebas automáticas**: `tests/rastreo.e2e.js` (30 verificaciones con dos navegadores: collar y dueño).

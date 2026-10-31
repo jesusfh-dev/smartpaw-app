@@ -415,6 +415,84 @@
     .nav-item.active {
       color: var(--primary);
     }
+
+    /* ================= RASTREO EN TIEMPO REAL ================= */
+    .status-badge.state-online .status-dot { background: var(--success); box-shadow: 0 0 8px var(--success); }
+    .status-badge.state-connecting .status-dot { background: #F59E0B; box-shadow: 0 0 8px #F59E0B; animation: sp-pulse 1s infinite; }
+    .status-badge.state-offline .status-dot, .status-badge.state-error .status-dot { background: #EF4444; box-shadow: 0 0 8px #EF4444; }
+    .status-badge.state-idle .status-dot { background: #94A3B8; box-shadow: none; }
+    @keyframes sp-pulse { 50% { opacity: .35; } }
+
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+    .pill::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .pill.online { background: #D1FAE5; color: #047857; }
+    .pill.stale { background: #FEF3C7; color: #B45309; }
+    .pill.offline { background: #FEE2E2; color: #B91C1C; }
+    .pill.waiting, .pill.idle { background: #E2E8F0; color: #475569; }
+
+    .track-meta { font-size: 11px; color: var(--text-muted); font-weight: 600; margin: -4px 0 10px; line-height: 1.4; }
+    .track-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
+    .track-stat { background: var(--light-bg); border-radius: 12px; padding: 8px 4px; text-align: center; }
+    .track-stat b { display: block; font-size: 14px; font-weight: 800; color: var(--text-main); }
+    .track-stat span { font-size: 9px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: .3px; }
+    .track-stat.warn b { color: #DC2626; }
+    .track-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+
+    .btn-soft { border: 1px solid var(--border-color); background: #fff; color: var(--primary); font-weight: 700; font-size: 12px; padding: 10px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-soft.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .btn-soft:disabled { opacity: .45; cursor: not-allowed; }
+    .btn-float.on { background: var(--primary); color: #fff; }
+
+    .pet-marker { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 3px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,.3); background: #0052CC; transition: background .3s, filter .3s; }
+    .pet-marker.stale { background: #F59E0B; }
+    .pet-marker.offline { background: #94A3B8; filter: grayscale(1); }
+    .pet-marker.ringing { animation: sp-ring .5s ease-in-out 4; }
+    @keyframes sp-ring { 25% { transform: rotate(-15deg) scale(1.15); } 75% { transform: rotate(15deg) scale(1.15); } }
+
+    .modal-backdrop { position: absolute; inset: 0; background: rgba(10, 25, 47, .55); z-index: 2000; display: none; align-items: flex-end; justify-content: center; }
+    .modal-backdrop.open { display: flex; }
+    .modal-sheet { background: #fff; width: 100%; border-radius: 24px 24px 0 0; padding: 24px 20px 28px; }
+    .modal-sheet h3 { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+    .modal-sheet p { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.45; }
+    .code-input { width: 100%; font-size: 28px; font-weight: 800; letter-spacing: 8px; text-align: center; text-transform: uppercase; padding: 12px; border: 2px solid var(--border-color); border-radius: 16px; margin-bottom: 14px; outline: none; font-family: monospace; }
+    .code-input:focus { border-color: var(--primary); }
+    .btn-text { background: none; border: none; color: #B91C1C; font-weight: 700; font-size: 13px; margin-top: 12px; width: 100%; cursor: pointer; padding: 6px; }
+
+    .toast-stack { position: absolute; top: 70px; left: 16px; right: 16px; z-index: 3000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+    .toast { background: var(--dark); color: #fff; padding: 12px 14px; border-radius: 14px; font-size: 13px; font-weight: 600; box-shadow: var(--shadow-lg); animation: sp-tin .25s ease-out; transition: all .3s; }
+    .toast.success { background: #047857; } .toast.error { background: #B91C1C; } .toast.warn { background: #B45309; }
+    .toast.out { opacity: 0; transform: translateY(-6px); }
+    @keyframes sp-tin { from { opacity: 0; transform: translateY(-8px); } }
+
+    .emitter-wrap { padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; flex: 1; min-height: 0; }
+    .code-display { font-family: monospace; font-size: 34px; font-weight: 800; letter-spacing: 6px; color: var(--primary); margin: 4px 0 12px; text-align: center; }
+    .row-btns { display: flex; gap: 8px; }
+    .row-btns .btn-soft { flex: 1; }
+    .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--light-bg); border-radius: 12px; padding: 4px; gap: 4px; }
+    .seg button { border: none; background: none; padding: 9px 4px; border-radius: 9px; font-weight: 700; font-size: 12px; color: var(--text-muted); cursor: pointer; }
+    .seg button.active { background: #fff; color: var(--primary); box-shadow: var(--shadow-sm); }
+    .field-label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin: 4px 0 6px; display: flex; justify-content: space-between; }
+    .battery-bar { height: 10px; background: #E2E8F0; border-radius: 6px; overflow: hidden; }
+    .battery-fill { height: 100%; background: var(--success); transition: width .4s, background .4s; }
+    .switch-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 700; gap: 12px; }
+    .switch { position: relative; width: 44px; height: 26px; flex: none; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .switch span { position: absolute; inset: 0; background: #CBD5E1; border-radius: 26px; transition: .2s; cursor: pointer; }
+    .switch span::before { content: ''; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: .2s; }
+    .switch input:checked + span { background: #F59E0B; }
+    .switch input:checked + span::before { transform: translateX(18px); }
+    .btn-primary.stop { background: linear-gradient(135deg, #EF4444, #DC2626); }
+    .live-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; }
+    .live-grid div { background: var(--light-bg); border-radius: 10px; padding: 8px 10px; }
+    .live-grid b { display: block; font-size: 13px; color: var(--text-main); font-family: monospace; }
+    .live-grid span { color: var(--text-muted); font-weight: 700; font-size: 10px; text-transform: uppercase; }
+    .event-log { font-family: monospace; font-size: 11px; color: var(--text-muted); max-height: 120px; overflow-y: auto; line-height: 1.6; }
+    .radar-mini { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; background: linear-gradient(135deg, rgba(0,82,204,.1), rgba(0,180,216,.2)); border: 2px solid var(--secondary); flex: none; }
+    .radar-mini.live { animation: sp-radar 1.6s infinite; }
+    @keyframes sp-radar { 0% { box-shadow: 0 0 0 0 rgba(0,180,216,.5); } 100% { box-shadow: 0 0 0 18px rgba(0,180,216,0); } }
+    .collar-flash { animation: sp-flash .4s 6 !important; }
+    @keyframes sp-flash { 50% { background: #FEF3C7; transform: scale(1.12); } }
+
   </style>
 </head>
 <body>
@@ -434,28 +512,46 @@
 
     <main class="main-content">
 
-      <!-- PANTALLA 1: MAPA GPS -->
+      <!-- PANTALLA 1: MAPA GPS (RECEPTOR / DUEÑO) -->
       <section id="view-map" class="view-screen active">
         <div class="map-controls-floating">
-          <button class="btn-float" onclick="toggleSimulation()">
-            <span>⚡</span> <span id="sim-btn-text">Simular Ruta</span>
+          <button class="btn-float on" id="btn-follow" onclick="Owner.setFollow(!Owner.follow)">
+            <span>🎯</span> <span>Seguir</span>
           </button>
-          <button class="btn-float" onclick="recenterMap()">
-            <span>🎯</span> Centrar
+          <button class="btn-float" onclick="Owner.clearRoute()">
+            <span>🧹</span> Limpiar ruta
+          </button>
+          <button class="btn-float" onclick="openPairModal()">
+            <span>🔗</span> <span id="pair-btn-text">Vincular</span>
           </button>
         </div>
 
         <div id="map-container"></div>
 
-        <div class="pet-card-overlay">
+        <div class="pet-card-overlay" id="pet-card">
           <div class="pet-info-header">
             <div class="pet-avatar-wrapper">
               <div class="pet-avatar">🐶</div>
               <div>
                 <div class="pet-name">Max (Collar SMARTPAW)</div>
-                <div class="pet-breed">Golden Retriever • Rastreo Nube</div>
+                <div class="pet-breed" id="pet-sub">Golden Retriever • Sin vincular</div>
               </div>
             </div>
+            <span class="pill idle" id="collar-pill">Sin vincular</span>
+          </div>
+
+          <div class="track-meta" id="track-meta">Toca 🔗 Vincular e ingresa el código del collar.</div>
+
+          <div class="track-grid">
+            <div class="track-stat"><b id="st-speed">—</b><span>km/h</span></div>
+            <div class="track-stat"><b id="st-dist">—</b><span>Recorrido</span></div>
+            <div class="track-stat" id="st-bat-box"><b id="st-bat">—</b><span>Batería</span></div>
+            <div class="track-stat"><b id="st-lat">—</b><span>Latencia</span></div>
+          </div>
+
+          <div class="track-actions">
+            <button class="btn-soft" id="btn-buzz" onclick="Owner.buzz()" disabled>🔔 Sonar collar</button>
+            <button class="btn-soft" id="btn-mode" onclick="Owner.toggleMode()" disabled>⚡ Modo intensivo</button>
           </div>
 
           <div class="quick-vitals-row">
@@ -536,16 +632,71 @@
 
       <!-- PANTALLA 4: MODO EMISOR (COLLAR) -->
       <section id="view-emitter" class="view-screen">
-        <div class="emitter-screen">
-          <div class="radar-circle">📡</div>
-          <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">Modo Collar / Emisor GPS</h3>
-          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">
-            Transmite tu ubicación real por internet hacia la app del dueño a distancia.
-          </p>
-          <button id="btn-toggle-emitter" class="btn-primary" onclick="toggleGPSEmitter()">
-            Iniciar Transmisión GPS
-          </button>
-          <div id="emitter-coords" class="coords-box">Estado: Detenido</div>
+        <div class="emitter-wrap">
+          <div class="card">
+            <div class="card-title" style="justify-content: center;">Código de este collar</div>
+            <div class="code-display" id="collar-code">------</div>
+            <div class="row-btns">
+              <button class="btn-soft" onclick="Collar.shareCode()">📤 Compartir</button>
+              <button class="btn-soft" id="btn-newcode" onclick="Collar.newCode()">🔄 Nuevo código</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 14px;">
+              <div class="radar-mini" id="collar-radar">📡</div>
+              <div style="flex: 1;">
+                <div style="font-weight: 800; font-size: 15px;" id="collar-state-title">Collar apagado</div>
+                <div style="font-size: 12px; color: var(--text-muted);" id="collar-state-sub">Elige la fuente de ubicación e inicia la transmisión.</div>
+              </div>
+            </div>
+
+            <div class="field-label">Fuente de ubicación</div>
+            <div class="seg" id="seg-source">
+              <button data-v="sim" class="active" onclick="Collar.setSource('sim')">🧪 Simulado</button>
+              <button data-v="gps" onclick="Collar.setSource('gps')">🛰️ GPS real</button>
+            </div>
+
+            <div id="sim-speed-block">
+              <div class="field-label" style="margin-top: 12px;">Ritmo de la mascota</div>
+              <div class="seg" id="seg-speed">
+                <button data-v="caminar" class="active" onclick="Collar.setSpeed('caminar')">🚶 Caminar</button>
+                <button data-v="trotar" onclick="Collar.setSpeed('trotar')">🐕 Trotar</button>
+                <button data-v="correr" onclick="Collar.setSpeed('correr')">💨 Correr</button>
+              </div>
+            </div>
+
+            <div class="field-label" style="margin-top: 12px;"><span>Batería del collar (simulada)</span><span id="bat-txt">100%</span></div>
+            <div class="battery-bar"><div class="battery-fill" id="bat-fill" style="width: 100%;"></div></div>
+            <div class="row-btns" style="margin-top: 8px;">
+              <button class="btn-soft" onclick="Collar.setBattery(100)">🔌 Recargar</button>
+              <button class="btn-soft" onclick="Collar.setBattery(12)">🪫 Batería baja</button>
+            </div>
+
+            <div class="switch-row" style="margin-top: 14px;">
+              <span>📵 Simular pérdida de señal</span>
+              <label class="switch"><input type="checkbox" id="chk-signal" onchange="Collar.setSignalLost(this.checked)"><span></span></label>
+            </div>
+
+            <button id="btn-toggle-emitter" class="btn-primary" style="margin-top: 16px;" onclick="Collar.toggle()">Iniciar transmisión</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Transmisión en vivo</div>
+            <div class="live-grid">
+              <div><span>Latitud</span><b id="lv-lat">—</b></div>
+              <div><span>Longitud</span><b id="lv-lng">—</b></div>
+              <div><span>Velocidad</span><b id="lv-spd">—</b></div>
+              <div><span>Paquetes</span><b id="lv-pkts">0</b></div>
+              <div><span>Frecuencia</span><b id="lv-mode">Normal · 5 s</b></div>
+              <div><span>Dueño</span><b id="lv-owner">—</b></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Eventos</div>
+            <div class="event-log" id="event-log">Sin eventos.</div>
+          </div>
         </div>
       </section>
 
@@ -558,28 +709,696 @@
       <button class="nav-item" onclick="switchTab('emitter')"><span class="nav-icon">📡</span><span>Emisor</span></button>
     </nav>
 
+    <div class="toast-stack" id="toast-stack"></div>
+
+    <div class="modal-backdrop" id="pair-modal" onclick="if (event.target === this) closePairModal()">
+      <div class="modal-sheet">
+        <h3>🔗 Vincular collar</h3>
+        <p>En el celular que hará de collar abre la pestaña <b>Emisor</b> y escribe aquí el código de 6 caracteres que aparece.</p>
+        <input id="pair-input" class="code-input" maxlength="6" placeholder="ABC123" autocomplete="off" autocapitalize="characters" spellcheck="false">
+        <button class="btn-primary" onclick="submitPair()">Vincular</button>
+        <button class="btn-text" id="btn-unpair" onclick="Owner.unpair()">Desvincular collar</button>
+      </div>
+    </div>
+
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js"></script>
 
   <script>
-    let map, petMarker;
-    let isSimulating = false;
-    let simInterval = null;
-    let isEmitting = false;
-    let watchId = null;
-    let ecgChart = null;
+    'use strict';
 
-    let currentLat = 22.2530;
-    let currentLng = -97.8610;
+    /* =====================================================================
+     *  SMARTPAW · Rastreo en tiempo real
+     *  Transporte: MQTT sobre WebSockets seguros (wss)
+     *    - Mensajes retenidos  -> el dueño ve la última ubicación al conectarse
+     *    - Last Will (LWT)     -> el servidor avisa si el collar se desconecta
+     *    - Comandos + acuses   -> canal bidireccional dueño <-> collar
+     *  Tópicos:  smartpaw/v1/<CÓDIGO>/{telemetry, status/collar, status/owner, cmd, ack}
+     * ===================================================================== */
+    const CONFIG = {
+      brokers: ['wss://broker.emqx.io:8084/mqtt', 'wss://broker.hivemq.com:8884/mqtt'],
+      topicRoot: 'smartpaw/v1',
+      staleMs: 15000,                                     // sin datos por 15 s => "Sin señal"
+      intervals: { normal: 5000, intensivo: 1000 },       // frecuencia de envío del collar
+      speeds: { caminar: 1.4, trotar: 3.2, correr: 6.5 }, // m/s para la simulación
+      defaultCenter: { lat: 22.2530, lng: -97.8610 },
+      maxRoutePoints: 800,
+      pingEveryMs: 10000,
+      cmdTimeoutMs: 8000
+    };
 
-    // URL de base de datos pública en la nube temporal para pruebas académicas
-    const DB_URL = "https://smartpaw-demo-default-rtdb.firebaseio.com/ubicacion.json";
+    // ---------- Utilidades ----------
+    const $ = id => document.getElementById(id);
+    const store = {
+      get(k, d) { try { const v = localStorage.getItem('smartpaw_' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+      set(k, v) { try { localStorage.setItem('smartpaw_' + k, JSON.stringify(v)); } catch (e) { } }
+    };
+    const uid = (n = 8) => Array.from(crypto.getRandomValues(new Uint8Array(n)), b => (b % 36).toString(36)).join('');
+    const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const genCode = () => Array.from(crypto.getRandomValues(new Uint8Array(6)), b => CODE_ALPHABET[b % CODE_ALPHABET.length]).join('');
+    const normCode = s => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+    const topics = code => {
+      const b = `${CONFIG.topicRoot}/${code}`;
+      return { telemetry: `${b}/telemetry`, collar: `${b}/status/collar`, owner: `${b}/status/owner`, cmd: `${b}/cmd`, ack: `${b}/ack` };
+    };
+    const rad = x => x * Math.PI / 180, deg = x => x * 180 / Math.PI;
+    function haversine(a, b) {
+      const dLat = rad(b.lat - a.lat), dLng = rad(b.lng - a.lng);
+      const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLng / 2) ** 2;
+      return 2 * 6371000 * Math.asin(Math.sqrt(h));
+    }
+    function bearing(a, b) {
+      const y = Math.sin(rad(b.lng - a.lng)) * Math.cos(rad(b.lat));
+      const x = Math.cos(rad(a.lat)) * Math.sin(rad(b.lat)) - Math.sin(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.cos(rad(b.lng - a.lng));
+      return (deg(Math.atan2(y, x)) + 360) % 360;
+    }
+    function destPoint(p, brg, dist) {
+      const d = dist / 6371000, br = rad(brg), la = rad(p.lat), lo = rad(p.lng);
+      const la2 = Math.asin(Math.sin(la) * Math.cos(d) + Math.cos(la) * Math.sin(d) * Math.cos(br));
+      const lo2 = lo + Math.atan2(Math.sin(br) * Math.sin(d) * Math.cos(la), Math.cos(d) - Math.sin(la) * Math.sin(la2));
+      return { lat: deg(la2), lng: ((deg(lo2) + 540) % 360) - 180 };
+    }
+    function ago(ts) {
+      if (!ts) return '—';
+      const s = Math.max(0, Math.round((Date.now() - ts) / 1000));
+      if (s < 3) return 'ahora';
+      if (s < 60) return `hace ${s} s`;
+      const m = Math.round(s / 60); if (m < 60) return `hace ${m} min`;
+      const h = Math.round(m / 60); if (h < 24) return `hace ${h} h`;
+      return new Date(ts).toLocaleString('es-MX');
+    }
+    const fmtDist = m => m < 1000 ? `${Math.round(m)} m` : `${(m / 1000).toFixed(2)} km`;
+    function toast(msg, type = 'info') {
+      const el = document.createElement('div');
+      el.className = 'toast ' + type; el.textContent = msg;
+      $('toast-stack').appendChild(el);
+      setTimeout(() => el.classList.add('out'), 3200);
+      setTimeout(() => el.remove(), 3600);
+    }
+
+    // ---------- Conexión MQTT con reconexión y servidor de respaldo ----------
+    function createLink({ role, will, onConnect, onMessage, onState }) {
+      if (typeof mqtt === 'undefined') { onState('error'); return null; }
+      let idx = 0, client = null, fails = 0, ended = false;
+      const open = () => {
+        const c = mqtt.connect(CONFIG.brokers[idx], {
+          clientId: `sp-${role}-${uid(10)}`, clean: true, keepalive: 10,
+          reconnectPeriod: 3000, connectTimeout: 8000, will
+        });
+        client = c;
+        onState('connecting');
+        c.on('connect', () => { if (c !== client || ended) return; fails = 0; onState('online'); onConnect(); });
+        c.on('message', (topic, payload) => {
+          if (c !== client || ended) return;
+          let data; try { data = JSON.parse(payload.toString()); } catch (e) { return; }
+          if (data && typeof data === 'object') onMessage(topic, data);
+        });
+        c.on('reconnect', () => { if (c === client && !ended) onState('connecting'); });
+        c.on('offline', () => { if (c === client && !ended) onState('offline'); });
+        c.on('error', e => console.warn('[SmartPaw] MQTT:', e && e.message));
+        c.on('close', () => {
+          if (c !== client || ended) return;
+          onState('offline');
+          if (++fails >= 3 && CONFIG.brokers.length > 1) {        // cambia al servidor de respaldo
+            fails = 0; idx = (idx + 1) % CONFIG.brokers.length;
+            c.end(true); open();
+          }
+        });
+      };
+      open();
+      return {
+        get connected() { return !!client && client.connected && !ended; },
+        subscribe(list) { if (client) client.subscribe(list, { qos: 1 }); },
+        publish(topic, data, { qos = 0, retain = false } = {}) {
+          if (!client || !client.connected || ended) return false;
+          client.publish(topic, JSON.stringify(data), { qos, retain });
+          return true;
+        },
+        end(finalMsg) {
+          ended = true;
+          return new Promise(resolve => {
+            const c = client;
+            if (!c) return resolve();
+            const finish = () => { try { c.end(false, {}, () => resolve()); } catch (e) { resolve(); } };
+            if (finalMsg && c.connected) c.publish(finalMsg.topic, JSON.stringify(finalMsg.data), { qos: 1, retain: true }, finish);
+            else { c.end(true); resolve(); }
+            setTimeout(resolve, 2500);
+          });
+        }
+      };
+    }
+
+    /* =====================================================================
+     *  RECEPTOR (DUEÑO): mapa en vivo, ruta, estado y comandos al collar
+     * ===================================================================== */
+    const Owner = {
+      code: null, t: null, link: null, conn: 'idle',
+      collar: null, last: null, sid: null, lastSeq: -1,
+      route: [], distance: 0, follow: true, mode: 'normal',
+      pending: new Map(), latency: null, pingTimer: null, prevStatus: null, lowBatWarned: false,
+      marker: null, poly: null, accCircle: null, anim: null,
+
+      init() {
+        const fromUrl = normCode(new URLSearchParams(location.search).get('collar'));
+        const code = fromUrl.length === 6 ? fromUrl : normCode(store.get('pair_code', ''));
+        if (code.length === 6) this.pair(code, fromUrl.length !== 6);
+        this.render();
+        setInterval(() => this.render(), 1000);
+      },
+
+      pair(code, silent) {
+        code = normCode(code);
+        if (code.length !== 6) { toast('El código debe tener 6 caracteres', 'error'); return false; }
+        if (this.link) this.link.end({ topic: this.t.owner, data: { state: 'offline', reason: 'desvinculado', ts: Date.now() } });
+        this.code = code; store.set('pair_code', code);
+        this.collar = null; this.last = null; this.sid = null; this.lastSeq = -1;
+        this.latency = null; this.mode = 'normal'; this.prevStatus = null; this.lowBatWarned = false;
+        this.pending.clear(); this.clearRoute(true);
+        const t = this.t = topics(code);
+        this.link = createLink({
+          role: 'owner',
+          will: { topic: t.owner, payload: JSON.stringify({ state: 'offline', reason: 'conexion-perdida' }), qos: 1, retain: true },
+          onState: s => { this.conn = s; this.render(); },
+          onConnect: () => {
+            this.link.subscribe([t.telemetry, t.collar, t.ack]);
+            this.link.publish(t.owner, { state: 'online', ts: Date.now() }, { qos: 1, retain: true });
+          },
+          onMessage: (topic, d) => this.onMessage(topic, d)
+        });
+        if (!this.link) toast('No se pudo cargar el módulo de tiempo real. Revisa tu conexión.', 'error');
+        clearInterval(this.pingTimer);
+        this.pingTimer = setInterval(() => this.ping(), CONFIG.pingEveryMs);
+        if (!silent) toast(`🔗 Vinculado al collar ${code}`, 'success');
+        this.render();
+        return true;
+      },
+
+      unpair() {
+        if (this.link) this.link.end({ topic: this.t.owner, data: { state: 'offline', reason: 'desvinculado', ts: Date.now() } });
+        clearInterval(this.pingTimer);
+        this.link = null; this.code = null; this.t = null; this.conn = 'idle';
+        this.collar = null; this.last = null; this.prevStatus = null;
+        store.set('pair_code', '');
+        this.clearRoute(true);
+        closePairModal();
+        toast('Collar desvinculado');
+        this.render();
+      },
+
+      onMessage(topic, d) {
+        if (!this.t) return;
+        if (topic === this.t.telemetry) return this.onTelemetry(d);
+        if (topic === this.t.collar) { this.collar = d; if (d.mode && CONFIG.intervals[d.mode]) this.mode = d.mode; return this.render(); }
+        if (topic === this.t.ack) return this.onAck(d);
+      },
+
+      onTelemetry(d) {
+        const lat = +d.lat, lng = +d.lng;
+        if (!isFinite(lat) || !isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return;
+        const sameSession = !!d.sid && d.sid === this.sid;
+        if (sameSession && typeof d.seq === 'number' && d.seq <= this.lastSeq) return;   // duplicado / desordenado
+        const prev = this.last;
+        const p = { lat, lng, ts: Math.min(+d.ts || Date.now(), Date.now()) };
+        this.sid = d.sid; this.lastSeq = typeof d.seq === 'number' ? d.seq : -1;
+        this.last = Object.assign({}, d, p);
+        if (d.mode && CONFIG.intervals[d.mode]) this.mode = d.mode;
+
+        const seg = prev ? haversine(prev, p) : Infinity;
+        if (prev && sameSession) {
+          const dt = (p.ts - prev.ts) / 1000;
+          if (dt > 0 && seg / dt < 40) this.distance += seg;     // descarta saltos imposibles (> 144 km/h)
+        }
+        if (seg > 0.5) {
+          this.route.push([lat, lng]);
+          if (this.route.length > CONFIG.maxRoutePoints) this.route.shift();
+          this.poly.setLatLngs(this.route);
+        }
+        const dur = prev ? Math.min(CONFIG.intervals[this.mode] * 0.9, 1500) : 0;
+        this.moveMarker(lat, lng, dur);
+        if (d.src === 'gps' && d.acc) this.accCircle.setLatLng([lat, lng]).setRadius(d.acc);
+        else this.accCircle.setRadius(0);
+
+        if (typeof d.bat === 'number') {
+          if (d.bat <= 20 && !this.lowBatWarned) { this.lowBatWarned = true; toast(`🪫 Batería del collar baja (${Math.round(d.bat)}%)`, 'warn'); }
+          if (d.bat > 25) this.lowBatWarned = false;
+        }
+        this.render();
+      },
+
+      moveMarker(lat, lng, dur) {
+        cancelAnimationFrame(this.anim);
+        const from = this.marker.getLatLng(), t0 = performance.now();
+        const step = now => {
+          const k = dur ? Math.min(1, (now - t0) / dur) : 1;
+          const e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+          const pos = L.latLng(from.lat + (lat - from.lat) * e, from.lng + (lng - from.lng) * e);
+          this.marker.setLatLng(pos);
+          if (this.follow) this.centerOn(pos, false);
+          if (k < 1) this.anim = requestAnimationFrame(step);
+        };
+        this.anim = requestAnimationFrame(step);
+      },
+
+      // Centra dejando a la mascota visible por encima de la tarjeta inferior
+      centerOn(pos, animate) {
+        const card = $('pet-card');
+        const off = card ? card.offsetHeight / 2 : 0;
+        const target = map.unproject(map.project(pos).add([0, off]));
+        map.panTo(target, { animate: !!animate });
+      },
+
+      setFollow(v) {
+        this.follow = v;
+        $('btn-follow').classList.toggle('on', v);
+        if (v) this.centerOn(this.marker.getLatLng(), true);
+      },
+
+      clearRoute(silent) {
+        this.route = this.last ? [[this.last.lat, this.last.lng]] : [];
+        this.distance = 0;
+        if (this.poly) this.poly.setLatLngs(this.route);
+        if (!silent) toast('Ruta reiniciada');
+        this.render();
+      },
+
+      send(type, value) {
+        if (!this.link || !this.link.connected) { if (type !== 'ping') toast('Sin conexión con el servidor', 'error'); return null; }
+        const id = uid(8);
+        this.pending.set(id, { type, sent: performance.now() });
+        setTimeout(() => {
+          if (!this.pending.has(id)) return;
+          this.pending.delete(id);
+          if (type !== 'ping') toast('El collar no respondió', 'warn');
+        }, CONFIG.cmdTimeoutMs);
+        this.link.publish(this.t.cmd, { id, type, value, ts: Date.now() }, { qos: 1 });
+        return id;
+      },
+
+      onAck(d) {
+        const p = this.pending.get(d.id);
+        if (!p) return;
+        this.pending.delete(d.id);
+        const rtt = performance.now() - p.sent;
+        this.latency = Math.round(rtt / 2);
+        if (p.type === 'buzz') {
+          toast(`🔔 El collar está sonando (respondió en ${Math.round(rtt)} ms)`, 'success');
+          const m = $('pet-marker');
+          if (m) { m.classList.remove('ringing'); void m.offsetWidth; m.classList.add('ringing'); }
+        }
+        if (p.type === 'mode') {
+          if (d.mode && CONFIG.intervals[d.mode]) this.mode = d.mode;
+          toast(this.mode === 'intensivo' ? '⚡ Modo intensivo: ubicación cada 1 s' : '🕐 Modo normal: ubicación cada 5 s', 'success');
+        }
+        this.render();
+      },
+
+      ping() { if (this.status() === 'online') this.send('ping'); },
+      buzz() { this.send('buzz'); },
+      toggleMode() { this.send('mode', this.mode === 'intensivo' ? 'normal' : 'intensivo'); },
+
+      status() {
+        if (!this.code) return 'idle';
+        if (this.conn !== 'online') return 'nolink';
+        if (this.collar && this.collar.state === 'offline') return 'offline';
+        const collarOn = !!this.collar && this.collar.state === 'online';
+        if (!this.last && !collarOn) return 'waiting';
+        const ref = Math.max(this.last ? this.last.ts : 0, collarOn ? Math.min(this.collar.ts || 0, Date.now()) : 0);
+        if (Date.now() - ref > CONFIG.staleMs) return collarOn ? 'stale' : 'offline';
+        return 'online';
+      },
+
+      render() {
+        const s = this.status();
+        const LBL = { idle: 'Sin vincular', nolink: 'Conectando…', waiting: 'Esperando collar', online: 'En línea', stale: 'Sin señal', offline: 'Fuera de línea' };
+        const CLS = { idle: 'idle', nolink: 'waiting', waiting: 'waiting', online: 'online', stale: 'stale', offline: 'offline' };
+        const pill = $('collar-pill'); pill.className = 'pill ' + CLS[s]; pill.textContent = LBL[s];
+
+        // Avisos al cambiar de estado
+        const p = this.prevStatus;
+        if (p && p !== s && s !== 'nolink' && p !== 'nolink' && p !== 'idle') {
+          if (s === 'online' && p === 'waiting') toast('✅ Collar conectado', 'success');
+          else if (s === 'online') toast('✅ El collar volvió a estar en línea', 'success');
+          else if (s === 'stale') toast('⚠️ El collar perdió la señal', 'warn');
+          else if (s === 'offline' && p !== 'waiting') toast('🔌 El collar se desconectó', 'error');
+        }
+        this.prevStatus = s;
+
+        const reasons = { 'apagado': 'Collar apagado', 'conexion-perdida': 'Se perdió la conexión', 'bateria': 'Sin batería' };
+        const srcLabel = this.last && this.last.src === 'gps' ? `GPS ±${this.last.acc || '?'} m` : 'Simulación';
+        const modeLabel = this.mode === 'intensivo' ? 'cada 1 s' : 'cada 5 s';
+        const lastTs = this.last ? this.last.ts : (this.collar && this.collar.ts);
+        const meta = {
+          idle: 'Toca 🔗 Vincular e ingresa el código del collar.',
+          nolink: 'Conectando con el servidor en tiempo real…',
+          waiting: `Collar ${this.code} vinculado. Esperando su primera señal…`,
+          online: `Última señal ${ago(lastTs)} · ${srcLabel} · ${modeLabel}`,
+          stale: `⚠️ Sin señal desde ${ago(lastTs)}. Se muestra la última ubicación conocida.`,
+          offline: `${reasons[this.collar && this.collar.reason] || 'Fuera de línea'} · Última conexión ${ago(lastTs)}`
+        };
+        $('track-meta').textContent = meta[s];
+        $('pet-sub').textContent = this.code ? `Golden Retriever • Collar ${this.code}` : 'Golden Retriever • Sin vincular';
+        $('pair-btn-text').textContent = this.code || 'Vincular';
+
+        const live = s === 'online';
+        $('st-speed').textContent = this.last ? (live ? (Math.max(0, +this.last.spd || 0) * 3.6).toFixed(1) : '0.0') : '—';
+        $('st-dist').textContent = this.code ? fmtDist(this.distance) : '—';
+        const bat = this.last && typeof this.last.bat === 'number' ? this.last.bat : null;
+        $('st-bat').textContent = bat === null ? '—' : `${Math.round(bat)}%`;
+        $('st-bat-box').classList.toggle('warn', bat !== null && bat <= 20);
+        $('st-lat').textContent = live && this.latency !== null ? `${this.latency} ms` : '—';
+
+        $('btn-buzz').disabled = !live;
+        $('btn-mode').disabled = !live;
+        $('btn-mode').classList.toggle('on', this.mode === 'intensivo');
+
+        const m = $('pet-marker');
+        if (m) {
+          const ringing = m.classList.contains('ringing');
+          m.className = 'pet-marker' + (s === 'stale' ? ' stale' : s === 'offline' ? ' offline' : '') + (ringing ? ' ringing' : '');
+        }
+
+        renderHeader();
+      }
+    };
+
+    // Encabezado: si este celular es el collar muestra su transmisión; si no, la conexión del dueño
+    function renderHeader() {
+      const badge = document.querySelector('.status-badge');
+      let st, label;
+      if (Collar.on) {
+        st = Collar.signalLost ? 'offline' : Collar.conn;
+        label = Collar.signalLost ? 'SIN SEÑAL' : { online: 'TRANSMITIENDO', connecting: 'CONECTANDO' }[Collar.conn] || 'SIN CONEXIÓN';
+      } else {
+        st = !Owner.code ? 'idle' : Owner.conn;
+        label = { idle: 'SIN VINCULAR', connecting: 'CONECTANDO', online: 'EN LÍNEA', offline: 'SIN CONEXIÓN', error: 'SIN CONEXIÓN' }[st] || 'CONECTANDO';
+      }
+      badge.className = 'status-badge state-' + (st === 'error' ? 'offline' : st);
+      $('header-status-text').textContent = label;
+    }
+
+    /* =====================================================================
+     *  EMISOR (COLLAR): GPS real o simulado, batería, comandos del dueño
+     * ===================================================================== */
+    const Collar = {
+      code: null, t: null, link: null, conn: 'idle', on: false,
+      source: 'sim', speedKey: 'caminar', mode: 'normal',
+      battery: 100, pos: null, home: null, heading: Math.random() * 360, spd: 0,
+      fix: null, gpsError: null, watchId: null, timer: null, lastTick: 0,
+      seq: 0, sid: null, pkts: 0, signalLost: false, ownerState: null,
+      handled: [], wakeLock: null, audio: null,
+
+      init() {
+        let code = normCode(store.get('collar_code', ''));
+        if (code.length !== 6) { code = genCode(); store.set('collar_code', code); }
+        this.code = code;
+        const b = +store.get('collar_battery', 100);
+        this.battery = isFinite(b) ? Math.min(100, Math.max(0, b)) : 100;
+        const saved = store.get('collar_pos', null);
+        this.pos = saved && isFinite(saved.lat) && isFinite(saved.lng) ? saved : Object.assign({}, CONFIG.defaultCenter);
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible' && this.on) { this.requestWakeLock(); this.tick(); }
+        });
+        this.renderControls(); this.renderLive();
+      },
+
+      toggle() { this.on ? this.stop('apagado') : this.start(); },
+
+      start() {
+        if (this.on) return;
+        if (this.battery <= 0) { toast('Batería agotada. Pulsa "Recargar".', 'error'); return; }
+        try { this.audio = this.audio || new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { }
+        this.on = true; this.sid = uid(6); this.seq = 0; this.pkts = 0; this.lastTick = 0;
+        this.home = Object.assign({}, this.pos); this.ownerState = null;
+        const t = this.t = topics(this.code);
+        this.link = createLink({
+          role: 'collar',
+          will: { topic: t.collar, payload: JSON.stringify({ state: 'offline', reason: 'conexion-perdida' }), qos: 1, retain: true },
+          onState: s => { this.conn = s; this.renderLive(); },
+          onConnect: () => {
+            this.link.subscribe([t.cmd, t.owner]);
+            this.publishStatus();
+            this.tick();
+          },
+          onMessage: (topic, d) => this.onMessage(topic, d)
+        });
+        if (!this.link) { this.on = false; toast('No se pudo cargar el módulo de tiempo real.', 'error'); return; }
+        if (this.source === 'gps') this.startGPS();
+        this.schedule();
+        this.requestWakeLock();
+        this.log('▶️ Transmisión iniciada');
+        this.renderControls(); this.renderLive();
+      },
+
+      async stop(reason = 'apagado') {
+        if (!this.on) return;
+        this.on = false;
+        clearInterval(this.timer); this.stopGPS(); this.releaseWakeLock();
+        const link = this.link, t = this.t;
+        this.link = null; this.conn = 'idle';
+        this.log(reason === 'bateria' ? '🪫 Collar apagado por batería agotada' : '⏹️ Transmisión detenida');
+        this.renderControls(); this.renderLive();
+        if (link) await link.end({ topic: t.collar, data: { state: 'offline', reason, ts: Date.now() } });
+      },
+
+      schedule() {
+        clearInterval(this.timer);
+        this.timer = setInterval(() => this.tick(), CONFIG.intervals[this.mode]);
+      },
+
+      tick() {
+        if (!this.on) return;
+        const now = Date.now();
+        const dt = this.lastTick ? Math.min((now - this.lastTick) / 1000, 30) : 0;
+        this.lastTick = now;
+        // Batería simulada (descarga acelerada para la demo; más rápida en modo intensivo)
+        this.setBatteryValue(this.battery - (this.mode === 'intensivo' ? 0.06 : 0.02) * dt);
+        if (this.battery <= 0) { this.stop('bateria'); return; }
+        if (this.source === 'sim') this.stepSim(dt);
+        else if (this.fix) { this.pos = { lat: this.fix.lat, lng: this.fix.lng }; this.spd = this.fix.spd; }
+        store.set('collar_pos', this.pos);
+        this.publishTelemetry();
+        this.renderLive();
+      },
+
+      stepSim(dt) {
+        if (!dt) { this.spd = 0; return; }
+        const base = CONFIG.speeds[this.speedKey];
+        this.spd = base * (0.75 + Math.random() * 0.5);
+        this.heading = (this.heading + (Math.random() - 0.5) * 50 + 360) % 360;
+        if (!this.home) this.home = Object.assign({}, this.pos);
+        if (haversine(this.home, this.pos) > 400) this.heading = (bearing(this.pos, this.home) + (Math.random() - 0.5) * 40 + 360) % 360;
+        this.pos = destPoint(this.pos, this.heading, this.spd * dt);
+      },
+
+      publishTelemetry() {
+        if (!this.on || this.signalLost || !this.link) return;
+        if (this.source === 'gps' && !this.fix) return;       // aún sin posición GPS
+        const msg = {
+          sid: this.sid, seq: this.seq + 1, ts: Date.now(),
+          lat: +this.pos.lat.toFixed(6), lng: +this.pos.lng.toFixed(6),
+          spd: +(this.spd || 0).toFixed(2), hdg: Math.round(this.heading),
+          acc: this.source === 'gps' && this.fix ? Math.round(this.fix.acc) : null,
+          bat: +this.battery.toFixed(1), src: this.source, mode: this.mode
+        };
+        if (this.link.publish(this.t.telemetry, msg, { retain: true })) { this.seq++; this.pkts++; }
+      },
+
+      publishStatus() {
+        if (this.link) this.link.publish(this.t.collar, { state: 'online', ts: Date.now(), mode: this.mode, src: this.source }, { qos: 1, retain: true });
+      },
+
+      onMessage(topic, d) {
+        if (!this.t) return;
+        if (topic === this.t.owner) {
+          const prev = this.ownerState; this.ownerState = d.state;
+          if (prev !== d.state && (prev || d.state === 'online')) this.log(d.state === 'online' ? '👤 El dueño está conectado' : '👤 El dueño se desconectó');
+          return this.renderLive();
+        }
+        if (topic !== this.t.cmd || this.signalLost || !d.id) return;
+        if (this.handled.includes(d.id)) return;                  // QoS 1 puede duplicar
+        this.handled.push(d.id); if (this.handled.length > 50) this.handled.shift();
+        if (d.ts && Date.now() - d.ts > 30000) return;            // ignora comandos viejos
+        switch (d.type) {
+          case 'ping': break;
+          case 'buzz': this.buzz(); this.log('🔔 El dueño hizo sonar el collar'); break;
+          case 'mode':
+            if (!CONFIG.intervals[d.value]) return;
+            this.mode = d.value; this.schedule(); this.publishStatus();
+            this.log(d.value === 'intensivo' ? '⚡ Modo intensivo (cada 1 s) activado por el dueño' : '🕐 Modo normal (cada 5 s) activado por el dueño');
+            this.tick();
+            break;
+          default: return;
+        }
+        this.link.publish(this.t.ack, { id: d.id, type: d.type, ok: true, mode: this.mode, ts: Date.now() }, { qos: 1 });
+        this.renderLive();
+      },
+
+      buzz() {
+        try { if (navigator.vibrate) navigator.vibrate([300, 150, 300, 150, 300]); } catch (e) { }
+        try {
+          const ctx = this.audio || (this.audio = new (window.AudioContext || window.webkitAudioContext)());
+          if (ctx.resume) ctx.resume();
+          [0, .35, .7].forEach(t0 => {
+            const o = ctx.createOscillator(), g = ctx.createGain(), at = ctx.currentTime + t0;
+            o.type = 'square'; o.frequency.value = 1800;
+            g.gain.setValueAtTime(.0001, at);
+            g.gain.exponentialRampToValueAtTime(.2, at + .02);
+            g.gain.exponentialRampToValueAtTime(.0001, at + .25);
+            o.connect(g); g.connect(ctx.destination); o.start(at); o.stop(at + .27);
+          });
+        } catch (e) { }
+        const r = $('collar-radar'); r.classList.remove('collar-flash'); void r.offsetWidth; r.classList.add('collar-flash');
+        toast('🔔 ¡El dueño está buscando a la mascota!', 'warn');
+      },
+
+      startGPS() {
+        if (!('geolocation' in navigator)) { toast('Este dispositivo no tiene GPS disponible', 'error'); this.setSource('sim'); return; }
+        this.fix = null; this.gpsError = null;
+        this.watchId = navigator.geolocation.watchPosition(p => {
+          const c = p.coords, prev = this.fix, here = { lat: c.latitude, lng: c.longitude };
+          let spd = c.speed;
+          if ((spd === null || isNaN(spd)) && prev) { const dt = (p.timestamp - prev.t) / 1000; spd = dt > 0 ? haversine(prev, here) / dt : 0; }
+          this.fix = { lat: here.lat, lng: here.lng, acc: c.accuracy, spd: spd || 0, t: p.timestamp };
+          if (c.heading !== null && !isNaN(c.heading)) this.heading = c.heading;
+          this.gpsError = null;
+          if (!prev) { this.log(`🛰️ GPS fijado (±${Math.round(c.accuracy)} m)`); this.tick(); }
+          this.renderLive();
+        }, err => {
+          this.gpsError = err.code === 1 ? 'Permiso de ubicación denegado' : 'Sin señal GPS';
+          this.log('⚠️ ' + this.gpsError);
+          if (err.code === 1) toast('Permite el acceso a la ubicación para usar el GPS real', 'error');
+          this.renderLive();
+        }, { enableHighAccuracy: true, maximumAge: 2000, timeout: 20000 });
+      },
+      stopGPS() { if (this.watchId !== null) navigator.geolocation.clearWatch(this.watchId); this.watchId = null; },
+
+      setSource(v) {
+        if (this.source === v) return;
+        this.source = v;
+        if (this.on) {
+          if (v === 'gps') this.startGPS(); else { this.stopGPS(); this.home = Object.assign({}, this.pos); }
+          this.publishStatus();
+          this.log(v === 'gps' ? '🛰️ Fuente: GPS real' : '🧪 Fuente: simulación');
+        }
+        this.renderControls(); this.renderLive();
+      },
+      setSpeed(v) { this.speedKey = v; this.renderControls(); },
+
+      setBattery(v) {
+        this.setBatteryValue(v);
+        this.log(v >= 100 ? '🔌 Batería recargada' : `🪫 Batería ajustada a ${v}%`);
+        if (this.on) this.publishTelemetry();
+        this.renderLive();
+      },
+      setBatteryValue(v) {
+        const before = this.battery;
+        this.battery = Math.max(0, Math.min(100, v));
+        store.set('collar_battery', +this.battery.toFixed(2));
+        if (before > 20 && this.battery <= 20) this.log('🪫 Batería baja');
+        this.renderControls();
+      },
+
+      setSignalLost(v) {
+        this.signalLost = v;
+        this.log(v ? '📵 Pérdida de señal simulada: no se envían datos' : '📶 Señal restablecida');
+        if (!v && this.on) this.tick();
+        this.renderControls(); this.renderLive();
+      },
+
+      newCode() {
+        if (this.on) { toast('Detén la transmisión antes de cambiar el código', 'warn'); return; }
+        this.code = genCode(); store.set('collar_code', this.code);
+        this.renderControls();
+        toast(`Nuevo código: ${this.code}`, 'success');
+      },
+
+      async shareCode() {
+        const url = `${location.origin}${location.pathname}?collar=${this.code}`;
+        const text = `Sigue a mi mascota en SmartPaw. Código del collar: ${this.code}`;
+        try {
+          if (navigator.share) { await navigator.share({ title: 'SmartPaw', text, url }); return; }
+          await navigator.clipboard.writeText(`${text}\n${url}`);
+          toast('📋 Código y enlace copiados', 'success');
+        } catch (e) {
+          if (e && e.name === 'AbortError') return;
+          toast(`Código del collar: ${this.code}`);
+        }
+      },
+
+      async requestWakeLock() {
+        try {
+          if ('wakeLock' in navigator && !this.wakeLock) {
+            this.wakeLock = await navigator.wakeLock.request('screen');
+            this.wakeLock.addEventListener('release', () => { this.wakeLock = null; });
+          }
+        } catch (e) { }
+      },
+      releaseWakeLock() { try { if (this.wakeLock) this.wakeLock.release(); } catch (e) { } this.wakeLock = null; },
+
+      log(msg) {
+        const el = $('event-log');
+        if (el.dataset.empty !== 'no') { el.textContent = ''; el.dataset.empty = 'no'; }
+        const line = document.createElement('div');
+        line.textContent = `${new Date().toLocaleTimeString('es-MX', { hour12: false })}  ${msg}`;
+        el.prepend(line);
+        while (el.childElementCount > 40) el.lastElementChild.remove();
+      },
+
+      renderControls() {
+        $('collar-code').textContent = this.code || '------';
+        document.querySelectorAll('#seg-source button').forEach(b => b.classList.toggle('active', b.dataset.v === this.source));
+        document.querySelectorAll('#seg-speed button').forEach(b => b.classList.toggle('active', b.dataset.v === this.speedKey));
+        $('sim-speed-block').style.display = this.source === 'sim' ? '' : 'none';
+        $('btn-newcode').disabled = this.on;
+        const btn = $('btn-toggle-emitter');
+        btn.textContent = this.on ? 'Detener transmisión' : 'Iniciar transmisión';
+        btn.classList.toggle('stop', this.on);
+        const b = this.battery;
+        $('bat-txt').textContent = `${Math.round(b)}%`;
+        const fill = $('bat-fill');
+        fill.style.width = `${b}%`;
+        fill.style.background = b > 50 ? 'var(--success)' : b > 20 ? '#F59E0B' : '#EF4444';
+        $('collar-radar').classList.toggle('live', this.on && !this.signalLost);
+      },
+
+      renderLive() {
+        let title = 'Collar apagado', sub = 'Elige la fuente de ubicación e inicia la transmisión.';
+        if (this.on) {
+          if (this.signalLost) { title = 'Señal perdida (simulada)'; sub = 'El dueño verá "Sin señal" en unos 15 s.'; }
+          else if (this.conn === 'connecting') { title = 'Conectando…'; sub = 'Abriendo canal seguro con el servidor.'; }
+          else if (this.conn !== 'online') { title = 'Sin conexión'; sub = 'Reintentando automáticamente…'; }
+          else if (this.source === 'gps' && !this.fix) { title = 'Buscando GPS…'; sub = this.gpsError || 'Al aire libre la precisión es mejor.'; }
+          else { title = 'Transmitiendo en vivo'; sub = `Canal ${this.code} · cada ${CONFIG.intervals[this.mode] / 1000} s`; }
+        }
+        $('collar-state-title').textContent = title;
+        $('collar-state-sub').textContent = sub;
+        const has = this.on && (this.source === 'sim' || !!this.fix);
+        $('lv-lat').textContent = has ? this.pos.lat.toFixed(5) : '—';
+        $('lv-lng').textContent = has ? this.pos.lng.toFixed(5) : '—';
+        $('lv-spd').textContent = has ? `${(this.spd * 3.6).toFixed(1)} km/h` : '—';
+        $('lv-pkts').textContent = String(this.pkts);
+        $('lv-mode').textContent = this.mode === 'intensivo' ? 'Intensiva · 1 s' : 'Normal · 5 s';
+        $('lv-owner').textContent = !this.on ? '—' : this.ownerState === 'online' ? '🟢 Conectado' : this.ownerState === 'offline' ? '⚪ Desconectado' : '—';
+        renderHeader();
+      }
+    };
+
+    /* =====================================================================
+     *  App
+     * ===================================================================== */
+    let map, ecgChart;
 
     window.addEventListener('DOMContentLoaded', () => {
       initMap();
-      initECGChart();
-      setInterval(pollCloudData, 2000); // Consulta la nube cada 2 segundos
+      try { initECGChart(); } catch (e) { console.warn('[SmartPaw] Gráfica no disponible', e); }
+      Collar.init();
+      Owner.init();
+      const input = $('pair-input');
+      input.addEventListener('input', () => { input.value = normCode(input.value); });
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') submitPair(); });
+      if (typeof mqtt === 'undefined') toast('No se pudo cargar el módulo de tiempo real. Revisa tu conexión a internet.', 'error');
     });
 
     function switchTab(tabName) {
@@ -588,109 +1407,28 @@
       document.getElementById(`view-${tabName}`).classList.add('active');
       const tabMap = { 'map': 0, 'vitals': 1, 'mood': 2, 'emitter': 3 };
       document.querySelectorAll('.nav-item')[tabMap[tabName]].classList.add('active');
-      if (tabName === 'map' && map) setTimeout(() => map.invalidateSize(), 200);
+      if (tabName === 'map' && map) setTimeout(() => { map.invalidateSize(); if (Owner.follow) Owner.centerOn(Owner.marker.getLatLng(), false); }, 200);
     }
 
     function initMap() {
-      map = L.map('map-container', { zoomControl: false }).setView([currentLat, currentLng], 17);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
-
-      const petIcon = L.divIcon({
-        className: 'custom-pet-marker',
-        html: `<div style="background: #0052CC; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 3px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">🐶</div>`,
-        iconSize: [40, 40],
-        iconAnchor: [20, 20]
-      });
-      petMarker = L.marker([currentLat, currentLng], { icon: petIcon }).addTo(map);
+      const c = CONFIG.defaultCenter;
+      map = L.map('map-container', { zoomControl: false }).setView([c.lat, c.lng], 17);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
+      Owner.poly = L.polyline([], { color: '#0052CC', weight: 4, opacity: .75, lineJoin: 'round' }).addTo(map);
+      Owner.accCircle = L.circle([c.lat, c.lng], { radius: 0, color: '#00B4D8', weight: 1, fillOpacity: .12 }).addTo(map);
+      const icon = L.divIcon({ className: '', html: '<div class="pet-marker" id="pet-marker">🐶</div>', iconSize: [40, 40], iconAnchor: [20, 20] });
+      Owner.marker = L.marker([c.lat, c.lng], { icon, zIndexOffset: 1000 }).addTo(map);
+      map.on('dragstart', () => Owner.setFollow(false));
     }
 
-    function updatePetPosition(lat, lng) {
-      currentLat = lat;
-      currentLng = lng;
-      if (petMarker && map) {
-        petMarker.setLatLng([lat, lng]);
-        map.panTo([lat, lng]);
-      }
+    function openPairModal() {
+      $('pair-input').value = Owner.code || '';
+      $('btn-unpair').style.display = Owner.code ? '' : 'none';
+      $('pair-modal').classList.add('open');
+      setTimeout(() => $('pair-input').focus(), 100);
     }
-
-    function recenterMap() {
-      if (map) map.setView([currentLat, currentLng], 17);
-    }
-
-    // Leer coordenadas de la nube constantemente en el celular receptor
-    async function pollCloudData() {
-      if (isEmitting || isSimulating) return; // Si es emisor o simula, no lee de la nube para no sobreescribir
-      try {
-        const res = await fetch(DB_URL);
-        const data = await res.json();
-        if (data && data.lat && data.lng) {
-          updatePetPosition(data.lat, data.lng);
-        }
-      } catch (e) {
-        console.error("Error sincronizando nube", e);
-      }
-    }
-
-    // Enviar coordenadas reales a la nube desde el celular emisor (Collar)
-    async function sendCloudData(lat, lng) {
-      try {
-        await fetch(DB_URL, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ lat, lng, timestamp: Date.now() })
-        });
-      } catch (e) {
-        console.error("Error enviando a nube", e);
-      }
-    }
-
-    function toggleSimulation() {
-      isSimulating = !isSimulating;
-      const btnText = document.getElementById('sim-btn-text');
-      if (isSimulating) {
-        btnText.innerText = "Detener Demo";
-        let step = 0;
-        simInterval = setInterval(() => {
-          step += 0.00015;
-          const simLat = 22.2530 + Math.sin(step) * 0.001;
-          const simLng = -97.8610 + Math.cos(step) * 0.001;
-          updatePetPosition(simLat, simLng);
-        }, 1500);
-      } else {
-        btnText.innerText = "Simular Ruta";
-        clearInterval(simInterval);
-      }
-    }
-
-    function toggleGPSEmitter() {
-      const btn = document.getElementById('btn-toggle-emitter');
-      const coordsBox = document.getElementById('emitter-coords');
-
-      if (!isEmitting) {
-        if ("geolocation" in navigator) {
-          isEmitting = true;
-          btn.innerText = "Detener Transmisión";
-          btn.style.background = "#EF4444";
-
-          watchId = navigator.geolocation.watchPosition((pos) => {
-            const lat = pos.coords.latitude;
-            const lng = pos.coords.longitude;
-            coordsBox.innerHTML = `Transmitiendo GPS Real:<br>Lat: ${lat.toFixed(5)} | Lng: ${lng.toFixed(5)}`;
-            sendCloudData(lat, lng); // Sube a la nube en tiempo real
-          }, (err) => {
-            coordsBox.innerText = "Error GPS: " + err.message;
-          }, { enableHighAccuracy: true });
-        } else {
-          alert("Geolocalización no soportada.");
-        }
-      } else {
-        isEmitting = false;
-        navigator.geolocation.clearWatch(watchId);
-        btn.innerText = "Iniciar Transmisión GPS";
-        btn.style.background = "linear-gradient(135deg, var(--primary), var(--primary-light))";
-        coordsBox.innerText = "Estado: Detenido";
-      }
-    }
+    function closePairModal() { $('pair-modal').classList.remove('open'); }
+    function submitPair() { if (Owner.pair($('pair-input').value)) closePairModal(); }
 
     function initECGChart() {
       const ctx = document.getElementById('ecgChart').getContext('2d');
